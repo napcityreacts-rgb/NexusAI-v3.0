@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">NexusAI</string>
     <string name="dashboard_title">NexusAI</string>
-    <string name="dashboard_subtitle">[ BIOHAZARD PROTOCOL v3.1 ]</string>
+    <string name="dashboard_subtitle">[ BIOHAZARD PROTOCOL v6.2 ]</string>
     <string name="feature_chat">AI Chat</string>
     <string name="feature_chat_desc">Connect to neural inference engine</string>
     <string name="feature_notes">Data Logs</string>
