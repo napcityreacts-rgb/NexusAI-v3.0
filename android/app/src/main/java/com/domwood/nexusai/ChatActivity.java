@@ -72,7 +72,9 @@ public class ChatActivity extends AppCompatActivity {
                 recyclerView.setLayoutManager(new LinearLayoutManager(this));
                 adapter = new MessageAdapter(loadMessages());
                 recyclerView.setAdapter(adapter);
-                recyclerView.scrollToPosition(adapter.getItemCount() - 1);
+                if (adapter.getItemCount() > 0) {
+                    recyclerView.scrollToPosition(adapter.getItemCount() - 1);
+                }
             }
 
             if (chatSendBtn != null) {
@@ -108,7 +110,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private void sendMessage() {
         if (isSending) return;
-        if (chatInput == null || chatSendBtn == null || adapter == null) return;
+        if (chatInput == null || chatSendBtn == null || adapter == null || recyclerView == null) return;
 
         String text = chatInput.getText().toString().trim();
         if (text.isEmpty()) return;
@@ -116,7 +118,9 @@ public class ChatActivity extends AppCompatActivity {
 
         String time = new SimpleDateFormat("HH:mm:ss", Locale.US).format(new Date());
         adapter.addMessage(new ChatMessage("USER", text, "user", time));
-        recyclerView.scrollToPosition(adapter.getItemCount() - 1);
+        if (adapter.getItemCount() > 0) {
+            recyclerView.scrollToPosition(adapter.getItemCount() - 1);
+        }
 
         if (prefs == null) {
             showSystemError("Settings not loaded. Restart the app.");
@@ -218,7 +222,7 @@ public class ChatActivity extends AppCompatActivity {
                     if (isFinishing() || isDestroyed()) return;
                     if (adapter != null) {
                         adapter.addMessage(new ChatMessage("NEXUS", responseText, "ai", t));
-                        if (recyclerView != null) {
+                        if (recyclerView != null && adapter.getItemCount() > 0) {
                             recyclerView.scrollToPosition(adapter.getItemCount() - 1);
                         }
                         saveMessages();
@@ -233,7 +237,7 @@ public class ChatActivity extends AppCompatActivity {
                     if (isFinishing() || isDestroyed()) return;
                     if (adapter != null) {
                         adapter.addMessage(new ChatMessage("SYSTEM", errText, "ai", t));
-                        if (recyclerView != null) {
+                        if (recyclerView != null && adapter.getItemCount() > 0) {
                             recyclerView.scrollToPosition(adapter.getItemCount() - 1);
                         }
                         saveMessages();
@@ -260,7 +264,9 @@ public class ChatActivity extends AppCompatActivity {
         String t = new SimpleDateFormat("HH:mm:ss", Locale.US).format(new Date());
         if (adapter != null) {
             adapter.addMessage(new ChatMessage("SYSTEM", msg, "ai", t));
-            if (recyclerView != null) recyclerView.scrollToPosition(adapter.getItemCount() - 1);
+            if (recyclerView != null && adapter.getItemCount() > 0) {
+                recyclerView.scrollToPosition(adapter.getItemCount() - 1);
+            }
         }
     }
 

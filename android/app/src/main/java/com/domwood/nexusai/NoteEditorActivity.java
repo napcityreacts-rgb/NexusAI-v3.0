@@ -39,13 +39,19 @@ public class NoteEditorActivity extends AppCompatActivity {
         EditText titleEdit = findViewById(R.id.editorTitle);
         EditText contentEdit = findViewById(R.id.editorContent);
 
-        if (noteId >= 0) loadNote(noteId, titleEdit, contentEdit);
+        if (noteId >= 0 && titleEdit != null && contentEdit != null) {
+            loadNote(noteId, titleEdit, contentEdit);
+        }
 
         android.view.View backBtn = findViewById(R.id.editorBackBtn);
         if (backBtn != null) backBtn.setOnClickListener(v -> finish());
 
         android.view.View saveBtn = findViewById(R.id.editorSaveBtn);
-        if (saveBtn != null) saveBtn.setOnClickListener(v -> saveNote(titleEdit, contentEdit));
+        if (saveBtn != null) saveBtn.setOnClickListener(v -> {
+            if (titleEdit != null && contentEdit != null) {
+                saveNote(titleEdit, contentEdit);
+            }
+        });
 
         android.view.View deleteBtn = findViewById(R.id.editorDeleteBtn);
         if (deleteBtn != null) {
