@@ -29,19 +29,26 @@ public class NeuralActivity extends AppCompatActivity {
             return;
         }
 
-        // Back button
         View backArea = findViewById(R.id.neuralBackBtn);
         if (backArea != null) {
             backArea.setOnClickListener(v -> finish());
         }
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
         startStatsUpdater();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopStatsUpdater();
+    }
+
     private void startStatsUpdater() {
-        if (statsTimer != null) {
-            try { statsTimer.cancel(); } catch (Exception ignored) {}
-        }
+        stopStatsUpdater();
         statsTimer = new Timer();
         statsTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -68,12 +75,16 @@ public class NeuralActivity extends AppCompatActivity {
         }, 0, 2000);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    private void stopStatsUpdater() {
         if (statsTimer != null) {
             try { statsTimer.cancel(); } catch (Exception ignored) {}
             statsTimer = null;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopStatsUpdater();
     }
 }
