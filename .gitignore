@@ -25,3 +25,14 @@ Thumbs.db
 
 # Temp clone dirs
 NexusAI-*
+
+# Old build artifacts
+*.zip
+
+# Active.html (web demo, not part of Android app)
+active.html
+
+# Root build scripts (legacy, no longer used)
+build.sh
+run.sh
+clean.sh
