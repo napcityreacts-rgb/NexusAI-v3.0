@@ -11,12 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -45,7 +45,7 @@ public class ChatActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private MessageAdapter adapter;
     private EditText chatInput;
-    private Button chatSendBtn;
+    private AppCompatButton chatSendBtn;
     private SharedPreferences prefs;
     private ExecutorService executor;
     private volatile boolean isSending = false;
@@ -108,6 +108,13 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
+    private ExecutorService getExecutor() {
+        if (executor == null || executor.isShutdown() || executor.isTerminated()) {
+            executor = Executors.newSingleThreadExecutor();
+        }
+        return executor;
+    }
+
     private void sendMessage() {
         if (isSending) return;
         if (chatInput == null || chatSendBtn == null || adapter == null || recyclerView == null) return;
@@ -143,8 +150,7 @@ public class ChatActivity extends AppCompatActivity {
         isSending = true;
         chatSendBtn.setEnabled(false);
         chatSendBtn.setText("...");
-        executor = Executors.newSingleThreadExecutor();
-        executor.execute(() -> {
+        getExecutor().execute(() -> {
             try {
                 JSONObject body = new JSONObject();
                 body.put("model", prefs.getString("model", "gpt-3.5-turbo"));
@@ -250,10 +256,6 @@ public class ChatActivity extends AppCompatActivity {
                     if (chatSendBtn != null) {
                         chatSendBtn.setEnabled(true);
                         chatSendBtn.setText(">");
-                    }
-                    if (executor != null) {
-                        executor.shutdownNow();
-                        executor = null;
                     }
                 });
             }
