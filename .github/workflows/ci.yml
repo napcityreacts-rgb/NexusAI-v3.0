@@ -13,16 +13,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          java-version: "17"
-          distribution: "temurin"
-
+          java-version: '17'
+          distribution: 'temurin'
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
-
       - name: Cache Gradle packages
         uses: actions/cache@v4
         with:
@@ -30,16 +27,14 @@ jobs:
             ~/.gradle/caches
             ~/.gradle/wrapper
             android/.gradle
-          key: gradle-${{ runner.os }}-${{ hashFiles("android/**/*.gradle*", "android/gradle-wrapper.properties") }}
+          key: gradle-${{ runner.os }}-${{ hashFiles('android/**/*.gradle*', 'android/gradle-wrapper.properties') }}
           restore-keys: |
             gradle-${{ runner.os }}-
-
       - name: Compile debug Java sources
         run: |
           cd android
           chmod +x gradlew || true
           ./gradlew compileDebugJavaWithJavac --stacktrace
-
       - name: Run Android Lint
         run: |
           cd android
@@ -47,12 +42,11 @@ jobs:
           if [ -f app/build/reports/lint-results-debug.html ]; then
             echo "Lint report generated"
           fi
-
       - name: Verify APK can be built
         run: |
           cd android
           ./gradlew assembleDebug --stacktrace
-          APK=
+          APK=$(find app/build/outputs/apk/debug/ -name "*.apk" 2>/dev/null | head -1)
           if [ -z "$APK" ]; then
             echo "ERROR: APK not found"
             exit 1
@@ -64,28 +58,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - name: Check for hardcoded secrets in Android sources
         run: |
           echo "Scanning Android Java sources for potential secrets..."
-          if grep -r -i "password\s*=\s*\"[^"]+\"" android/app/src/main/java/ 2>/dev/null; then
+          if grep -ri "password" android/app/src/main/java/ 2>/dev/null; then
             echo "WARNING: Possible hardcoded password found"
           else
             echo "No hardcoded passwords found"
           fi
-          if grep -r -i "api[_-]?key\s*=\s*\"[^"]+\"" android/app/src/main/java/ 2>/dev/null; then
+          if grep -ri "api.key" android/app/src/main/java/ 2>/dev/null; then
             echo "WARNING: Possible hardcoded API key found"
           else
             echo "No hardcoded API keys found"
           fi
-
       - name: Source line count
         run: |
           LINES=$(find android/app/src/main/java/ -name "*.java" -exec cat {} + | wc -l)
           echo "Total Java source lines: $LINES"
           FILES=$(find android/app/src/main/java/ -name "*.java" | wc -l)
           echo "Total Java files: $FILES"
-
       - name: Verify all required Activity classes exist
         run: |
           echo "Verifying all Activity classes are present..."
@@ -98,7 +89,6 @@ jobs:
               exit 1
             fi
           done
-
       - name: Verify all layout XML files exist
         run: |
           echo "Verifying all layout files are present..."
